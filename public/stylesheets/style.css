@@ -1,0 +1,19 @@
+body {
+  padding: 50px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+a {
+  color: #00B7FF;
+}
+
+#mainapp{
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-box-pack: justify;
+    -webkit-box-align: stretch;
+    width:200px;
+    height: 100px;
+    border: 1px solid;
+    background-color: #123456;
+}

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Pull</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="javascripts/jquery-1.7.1.min.js"></script>
+    <script>
+        var socket = io.connect('http://192.168.1.87:3000');
+        //连接成功
+        socket.on('connect', function () {
+//            console.log('connect');
+
+        })
+        //失去连接
+        socket.on('disconnect', function () {
+//            console.log('disconnect');
+        });
+        socket.on('agree',function(data){
+                $("#"+data.elementname).css({
+                    backgroundColor:"#FFFFFF"
+                });
+                $("#"+data.elementname).removeAttr("disabled");
+        });
+
+    </script>
+</head>
+<body>
+<div id="app">
+    <form>
+        <label>名字:</label><input type="text" id="name"><br>
+        <label>公司:</label><input type="text" id="company"><br>
+        <label>城市:</label><input type="text" id="city"><br>
+        <label>国家:</label><input type="text" id="country"><br>
+    </form>
+</div>
+<script>
+    $(document).ready(function () {
+
+        $("input").focus(function(e){
+
+            socket.emit('formselect',{elementname:$(e.target).attr('id')});
+            socket.on('forbidden',function(data){
+                console.log("ddd"+$(e.target).attr('id'));
+                console.log(data.elementname);
+                if(data.elementname==$(e.target).attr('id')){
+                    $("#"+data.elementname).css({
+                        backgroundColor:"#FF0000"
+                    });
+                    $("#"+data.elementname).attr("disabled","disabled");
+                    return false;
+                }
+            });
+        });
+        $("input").blur(function(e){
+            socket.emit('formnotselect',{elementname:$(e.target).attr('id')});
+        });
+    });
+</script>
+</body>
+</html>

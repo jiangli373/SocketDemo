@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Pull</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="javascripts/jquery-1.7.1.min.js"></script>
+    <script>
+        var socket = io.connect('http://localhost');
+        //连接成功
+        socket.on('connect', function () {
+            $("#content").empty();
+            $("#content").append("已经连接到服务器");
+        });
+        //失去连接
+        socket.on('disconnect', function () {
+            $("#content").empty();
+            $("#content").append("断开与服务器的连接");
+        });
+    </script>
+</head>
+<body>
+<div id="app">
+    <div><label>连接状态:</label>
+
+        <div id="content">
+        </div>
+    </div>
+
+</div>
+</body>
+</html>
