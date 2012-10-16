@@ -2,11 +2,12 @@
 <html>
 <head>
     <title>Pull</title>
+    <meta charset="utf-8">
     <script src="/socket.io/socket.io.js"></script>
     <script src="javascripts/jquery-1.7.1.min.js"></script>
     <link href="stylesheets/style.css">
     <script>
-        var socket = io.connect('http://localhost');
+        var socket = io.connect('http://localhost:3000');
         //连接成功
         socket.on('connect', function () {
             console.log('connect');

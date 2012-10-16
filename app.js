@@ -4,19 +4,23 @@
 
 var express = require('express')
     , routes = require('./routes')
+    , http = require('http')
+    , path = require('path')
     , io = require('socket.io');
-var app = module.exports = express.createServer();
+var app = express();
 
-io = io.listen(app);
 // Configuration
 
-app.configure(function () {
+app.configure(function(){
+    app.set('port', process.env.PORT || 3000);
     app.set('views', __dirname + '/views');
     app.set('view engine', 'jade');
+    app.use(express.favicon());
+    app.use(express.logger('dev'));
     app.use(express.bodyParser());
     app.use(express.methodOverride());
     app.use(app.router);
-    app.use(express.static(__dirname + '/public'));
+    app.use(express.static(path.join(__dirname, 'public')));
 });
 
 app.configure('development', function () {
@@ -27,24 +31,22 @@ app.configure('production', function () {
     app.use(express.errorHandler());
 });
 
-// Routes
+var  server = http.createServer(app);
+io = io.listen(server);
 
 app.get('/', routes.index);
 
-app.listen(3000, function () {
-    console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
+server.listen(app.get('port'), function(){
+    console.log("Express server listening on port " + app.get('port'));
 });
-
-//io.set('log level', '0');
 
 io.configure(function () {
     io.configure(function () {
-        io.set('log level', '0');
+//        io.set('log level', '3');
         io.set('authorization', function (handshakeData, callback) {
-//            console.log(handshakeData);
-            if(handshakeData){
+            if (handshakeData) {
                 callback(null, true);
-            }else{
+            } else {
                 callback(null, false);
             }
 
@@ -58,8 +60,8 @@ io.sockets.on('connection', function (socket) {
 
     socket.join('room1');
 
-    socket.on('pull',function(){
-        socket.emit('getTime', { currentTime:date2str(new Date(),"yyyy/MM/dd hh:mm:ss")})
+    socket.on('pull', function () {
+        socket.emit('getTime', { currentTime:date2str(new Date(), "yyyy/MM/dd hh:mm:ss")})
     });
 
     socket.on('push', function (data) {
@@ -68,12 +70,12 @@ io.sockets.on('connection', function (socket) {
 
     socket.on('formselect', function (data) {
         console.log(data);
-        socket.broadcast.to('room1').emit('forbidden', { elementname: data.elementname});
+        socket.broadcast.to('room1').emit('forbidden', { elementname:data.elementname});
 
     });
     socket.on('formnotselect', function (data) {
 //      io.sockets.in('room1').emit('forbidden', { elementname: data.elementname}); //对所有在room1里的client发送消息
-        socket.broadcast.to('room1').emit('agree', { elementname: data.elementname}); //对除了当前建立连接的其他client发送消息
+        socket.broadcast.to('room1').emit('agree', { elementname:data.elementname}); //对除了当前建立连接的其他client发送消息
     });
 
 });
