@@ -16,10 +16,6 @@
         socket.on('disconnect', function () {
             console.log('disconnect');
         });
-        //尝试连接，先于connect
-        socket.on('connecting', function () {
-            console.log('connecting');
-        });
         function pullTime() {
             socket.emit('pull');
             socket.on('getTime', function (data) {
